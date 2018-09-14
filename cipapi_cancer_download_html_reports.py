@@ -28,7 +28,7 @@ class run_api_call():
 
     # Authenticate
     def get_authenticated_header(self):
-        #print("debug: running module get_authenticated_header")
+        #print("debug: running function get_authenticated_header")
 
         url = CIP_API_SERVER_URL
         auth_endpoint = "get-token/"
@@ -51,7 +51,7 @@ class run_api_call():
 
     # Return json response if successful
     def get_url_json_response(self, url):
-        #print("debug: running module get_url_json_response")
+        #print("debug: running function get_url_json_response")
 
         payload = {'page_size':'1000','sample_type':disease,'search':gmc}
 
@@ -69,7 +69,7 @@ class run_api_call():
 
     # Return raw response stream - for downloading files endpoint. Raw socket response content expected.
     def get_url_file_download(self, url):
-        #print("debug: running module get_url_json_download")
+        #print("debug: running function get_url_json_download")
 
         response = requests.get(
             url=url, headers=self.get_authenticated_header(), stream = True)
@@ -79,7 +79,7 @@ class run_api_call():
 
     # Get all data from interpretation-request
     def get_gel_ir_summary(self):
-        #print("debug: running module get_gel_ir")
+        #print("debug: running function get_gel_ir")
 
         print("Searching ", gmc, " GMC for all ", disease, "cases")
 
@@ -113,7 +113,7 @@ class run_api_call():
                     file_output_path = os.path.join(
                         current_dir_path, html_dir, ir_filename)
 
-                    # Check if file already exists in output dir, if not pass to download module
+                    # Check if file already exists in output dir, if not pass to download function
                     if os.path.exists(file_output_path) == False:
                         self.download_report(ir_filename, ir_report_url)
 
