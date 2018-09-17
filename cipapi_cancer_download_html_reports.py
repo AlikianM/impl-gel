@@ -20,8 +20,8 @@ CIP_API_SERVER_URL = os.getenv("CIP_API_SERVER_URL")
 
 # IO paths
 current_dir_path = os.path.dirname(os.path.realpath('__file__'))
-html_dir = 'ir_html_files'
-gmc = 'imperial'
+html_dir = 'ir_html_files' # Output folder
+gmc = 'imperial' # Limit to local cases
 disease = 'cancer'
 
 class run_api_call():
@@ -53,6 +53,7 @@ class run_api_call():
     def get_url_json_response(self, url):
         #print("debug: running function get_url_json_response")
 
+        # Pass the parameters as single payload
         payload = {'page_size':'1000','sample_type':disease,'search':gmc}
 
         # Should be: https://cipapi.genomicsengland.nhs.uk/api/2/interpretation-request?page_size=1000&sample_type=cancer&search=imperial
@@ -106,7 +107,7 @@ class run_api_call():
                 ir_filename = files.get('file_name')
                 ir_file_type = files.get('file_type')
 
-                # Save only html files to file (not any csv files)
+                # Save only html files to file (not any csv files present)
                 if ir_file_type == "html":
                     print("{} {}".format("Found html...", ir_filename))
 
@@ -118,25 +119,27 @@ class run_api_call():
                         self.download_report(ir_filename, ir_report_url)
 
                     elif os.path.exists(file_output_path) == True:
-                        print("{} {}".format("Found html already exits, skipping...", ir_report_url))
+                        print("{} {}".format("This html already exists in local folder, skipping download...", ir_report_url))
 
 
     # Download all html files. Use alternative reponse without handling errors as an empty (not json) 
     # response body is expected from this endpoint
     def download_report(self, ir_filename, ir_report_url):
 
-        # url is already provided from within ir endpoint
+        # The url is already provided from within ir endpoint, so pass this variable.
+        # Run request through authentication and return json
         file_download = self.get_url_file_download(url=ir_report_url)
+
         file_output_path = os.path.join(current_dir_path, html_dir, ir_filename)
 
-        # Run request through auth and return json
+        # Write to output
         with open(file_output_path, 'wb') as f:
-            print("{} {}".format("Downloading found html...", ir_filename))
+            print("{} {}".format("Downloading html...", ir_filename))
 
             for chunk in file_download.iter_content(chunk_size=128):
                 f.write(chunk)
             
-            print("{} {}{}".format("Downloading found html...", ir_filename, "...finished"))
+            print("{} {}{}".format("Downloading html...", ir_filename, "...finished"))
             
 
 if __name__ == '__main__':
