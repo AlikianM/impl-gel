@@ -78,7 +78,7 @@ for filename in os.listdir(report_dir_path):
                     filename_suffix = table_headers_dict[key] # suffix for csv
 
             # Print each table title to stdout
-            print("table suffix=", filename_suffix, sep="")
+            #print("table suffix=", filename_suffix, sep="")
 
             # Hold next table in dataframe
             df_position = df[table_counter]
@@ -107,10 +107,10 @@ for filename in os.listdir(report_dir_path):
             print("Dimensions=", df_dimensions)
             print("Output path=", file_output_path)
             print("Adding pid as first column...")
-            print(tabulate(mod_table, headers='keys', tablefmt='psql'))
+            print(tabulate(mod_table, headers='keys', tablefmt='psql')) # debug use
             #mod_table.to_csv(file_output_path, sep=',', index=False) # debug, no need to write to file
 
-            # Write each table rows into concatenated export ready tables
+            # Write each table rows into concatenated export ready dataframes
             if prev_h3_tag_value == "Participant information":
                 participant_info_df = pd.concat(
                     [participant_info_df, mod_table], sort=False)
@@ -121,12 +121,16 @@ for filename in os.listdir(report_dir_path):
                 domain_1_variants_df = pd.concat(
                     [domain_1_variants_df, mod_table], sort=False)
             elif prev_h3_tag_value == "Domain 2 somatic variants":
-                domain_2_variants_df = pd.concat([domain_2_variants_df, mod_table], sort=False)
+                domain_2_variants_df = pd.concat(
+                    [domain_2_variants_df, mod_table], sort=False)
             elif prev_h3_tag_value == "Sequencing quality information":
                 seq_quality_info_df = pd.concat(
                     [seq_quality_info_df, mod_table], sort=False)
 
             table_counter += 1
+
+# Store all dataframes in list
+df_list = [participant_info_df, tumour_info_df, domain_1_variants_df, domain_2_variants_df, seq_quality_info_df]
 
 # Print concatenated tables to stdout
 print("participant_info_df...",  tabulate(
@@ -141,14 +145,19 @@ print("seq_quality_info_df...", tabulate(
     seq_quality_info_df, headers='keys', tablefmt='psql'), sep='\n')
 
 # Build output path and write output csvs for each table
+table_counter = 0
 for key in table_headers_dict:
+
+    # filename output
     filename = table_headers_dict[key]
     filename = filename.replace("_", "", 1) # tidy up name from dict
 
     file_output_path = os.path.join(
         current_dir_path, csv_dir, filename)
-    
-    participant_info_df.to_csv(file_output_path, sep=',', index=False)
 
+    df_list[table_counter].to_csv(file_output_path, sep=',', index=False)
+
+    table_counter += 1
+    
 # End
 print("Done")
