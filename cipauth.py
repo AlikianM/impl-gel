@@ -7,14 +7,14 @@ Created 12-09-2018 by Graham Rose
 import requests
 import os
 
-# As environment vars
-CIP_API_USERNAME = os.getenv("CIP_API_USERNAME")
-CIP_API_PASSWORD = os.getenv("CIP_API_PASSWORD")
-CIP_API_SERVER_URL = os.getenv("CIP_API_SERVER_URL")
-
-# Authenticate
+# Get token
 def get_authenticated_header():
     #print("debug running: get_authenticated_header")
+
+    # As environment vars
+    CIP_API_USERNAME = os.getenv("CIP_API_USERNAME")
+    CIP_API_PASSWORD = os.getenv("CIP_API_PASSWORD")
+    CIP_API_SERVER_URL = os.getenv("CIP_API_SERVER_URL")
 
     url = CIP_API_SERVER_URL
     auth_endpoint = "get-token/"
