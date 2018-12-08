@@ -39,9 +39,10 @@ for filename in os.listdir(report_dir_path):
     filename_path = os.path.join(report_dir_path, filename)
 
     # Currently skipping supp. htmls holding domain 3 data, which have the 
-    # suffix of v1_8.supplementary.html
+    # suffix of .supplementary.html
 
-    if filename_path.endswith('v1_8.html'):
+    if filename_path.endswith(('v1_8.html', 'v1_9.html')):
+        print(filename)
         soup = BeautifulSoup(open(filename_path), 'html.parser')
         
         # Some running stdout of progress
