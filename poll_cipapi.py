@@ -1,14 +1,10 @@
-'''
-Wrapping around GeL CIPAPI polling class
-
-Created 07-12-2018 by Graham Rose
-'''
-
 import requests
 import os
 import csv
 import json as json
 import urllib.request
+from clint.textui import progress
+
 from cipauth import Authenticate
 
 
@@ -18,7 +14,7 @@ class CipApi():
     Creation of authentication token handled by separate Authentication module.
     """
     
-    def __init__(self, sample_type, search, download_html):
+    def __init__(self, sample_type, search, download_html=None):
         """
         Initialises a CipApi instance with credentials and api url taken as environment variables.
         
@@ -51,7 +47,7 @@ class CipApi():
         self.all_relevant_cases = self.get_all_relevant_ir_cases()
         
         if download_html == True and self.sample_type == "cancer":
-            self.html_download = self.download_cancer_html_reports()
+            self.download_cancer_html_reports()
         else:
             pass
         
@@ -128,9 +124,8 @@ class CipApi():
                 page += 1
             else:
                 last_page = True
-            
-        all_cases_count = print("{} {} {} {} {}".format("Found", interpretation_request["count"], 
-                                                             "cases for", self.sample_type, "sample_type"))
+        
+        print("{} {} {} {}".format("Cases for ", self.sample_type, "found: ", interpretation_request["count"]))
                 
         return all_cases, all_cases_html_reports
     
@@ -141,7 +136,7 @@ class CipApi():
         Return sublist of only those ir cases that are of interest,
         eg. 'sent_to_gmcs', 'report_generated'
         """
-        print("Striping our non relevant cases, ie. cases not sent to gmc...")
+        print("Striping out all non relevant cases, ie. cases not sent to gmc...")
         
         status_types_to_keep = {
             "cancer": ["interpretation_generated", "sent_to_gmcs", "report_generated", "report_sent"],
@@ -150,12 +145,10 @@ class CipApi():
         case_list_to_poll = [
             case for case in self.all_cases if case["last_status"] in status_types_to_keep[self.sample_type]]
               
-        all_relevant_cases_count = print("{} {} {} {} {}".format("Keeping",len(case_list_to_poll),
-                                                                 "relevant cases for", self.sample_type, "sample_type"))
+        print("{} {} {} {}".format("Relevant cases for", self.sample_type, "kept: ", len(case_list_to_poll)))
         
         return case_list_to_poll
     
-            
             
     def download_cancer_html_reports(self):
         """
@@ -169,34 +162,36 @@ class CipApi():
         
         for case in self.all_relevant_cases:
             print("Pulling html for case...", case["interpretation_request_id"])
-            
+
             for case_html_report in self.all_case_html_reports:
                 if case_html_report["interpretation_request_id"] == case["interpretation_request_id"]:
-        
                     result_filename = case_html_report["report_html_filename"]
                     result_report_url = case_html_report["report_html_url"]
-                    
+
                     file_output_path = os.path.join(current_dir_path, html_dir, result_filename)
-        
-                    # check if file already exists in output dir, if not pass to download function
+
+                    # if file do not already exist in output dir, pass to download function
                     if os.path.exists(file_output_path) == False:
-                    
-                        file_download = self.download_html_file_(result_report_url)
+                        download = self.return_response_as_stream(
+                            result_report_url)
                         
                         with open(file_output_path, 'wb') as f:
                             print("{} {}".format("Downloading the report...", result_filename))
+                            total_length = int(download.headers.get('content-length'))
                             
-                            for chunk in file_download.iter_content(chunk_size=128):
-                                f.write(chunk)
+                            for chunk in progress.bar(download.iter_content(chunk_size=512), expected_size=(total_length/512)+1):
+                                if(chunk):
+                                    f.write(chunk)
+                                    f.flush()
 
                     elif os.path.exists(file_output_path) == True:
                         print("{} {}".format("File already exits locally, skipping download...", result_report_url))
-            
-            
+           
+
     # Return raw response stream - for downloading files endpoint. Raw socket response content expected.
-    def download_html_file_(self, result_report_url):
+    def return_response_as_stream(self, result_report_url):
         """
-        Return raw response stream, required for 
+        Return raw response stream
         """
         auth = Authenticate()
         
