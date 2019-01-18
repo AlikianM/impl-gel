@@ -54,7 +54,7 @@ class CipApi():
         
     def get_all_ir_cases_basic(self):
         """
-        Overview of all the cases. Results are displayed in pages of 100 documents. 
+        Basic poll. Overview of all the cases. Results are displayed in pages of 100 documents. 
         All results will get a previous and next field with the url to the previous and next page. f
         First and last will have a null value in previous and next respectively.
         """
@@ -72,7 +72,7 @@ class CipApi():
     
     def get_all_ir_cases(self):
         """
-        Look for all ir cases, return cases and case html reports if cancer sample_type"
+        Look for all ir cases, return cases, download case html reports if sample_type is cancer"
         """
         print("Searching ", self.search, " LDP within WL GMC for all ", self.sample_type, "cases...")
 
@@ -125,7 +125,7 @@ class CipApi():
             else:
                 last_page = True
         
-        print("{} {} {} {}".format("Cases for ", self.sample_type, "found: ", interpretation_request["count"]))
+        print("{} {} {} {}".format("Cases for", self.sample_type, "found: ", interpretation_request["count"]))
                 
         return all_cases, all_cases_html_reports
     
