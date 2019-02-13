@@ -14,7 +14,7 @@ class Authenticate():
     
     def __init__(self):
         # As environment vars
-        self.cipapi_url = os.getenv("CIP_API_SERVER_URL")
+        self.cipapi_url = os.getenv("cip_api_server_url")
     
     def get_authenticated_header(self):
         """
@@ -28,8 +28,8 @@ class Authenticate():
         url_response = requests.post(
             url=self.cipapi_url.format(endpoint=auth_endpoint),
             json=dict(
-                username=os.getenv("CIP_API_USERNAME"),
-                password=os.getenv("CIP_API_PASSWORD"),
+                username=os.getenv("cip_api_username"),
+                password=os.getenv("cip_api_password"),
             ),
         )
         url_response_json = url_response.json()

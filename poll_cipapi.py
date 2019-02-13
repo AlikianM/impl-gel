@@ -40,8 +40,8 @@ class CipApi():
 
         self.sample_type = sample_type
         self.search = search
-        self.cipapi_url = os.getenv("CIP_API_SERVER_URL")
-        
+        self.cipapi_url = os.getenv("cip_api_server_url")
+
         # all_case_html_reports list unpopulated if not sample_type cancer 
         self.all_cases, self.all_case_html_reports = self.get_all_ir_cases()
         self.all_relevant_cases = self.get_all_relevant_ir_cases()
