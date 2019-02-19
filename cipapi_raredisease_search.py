@@ -25,8 +25,7 @@ for rd_case in rd_cases:
 
     # access rd case id and versions
     rd_case = rd_case['interpretation_request_id']
-    ir_id = rd_case.split('-')[0]
-    ir_version = rd_case.split('-')[1]
+    ir_id, ir_version = rd_case.split('-')
 
     # new endpoint for each case payload
     interpretation_request_case_url = CIP_API_SERVER_URL.format(
@@ -53,7 +52,7 @@ for rd_case in rd_cases:
             disorderList = item['disorderList']
             for item in disorderList:
                 specificDisease = item['specificDisease']
-                print("ir_id=", ir_id, "ir_version=", ir_version,
-                        "specificDisease=", specificDisease, sep='\t')
+                print("participants", participants, "ir_id", ir_id, "ir_version", ir_version,
+                        "specificDisease", specificDisease, sep='\t')
     except:
         pass
