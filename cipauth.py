@@ -20,9 +20,6 @@ class Authenticate():
         """
         Get a CIP-API token, then creates Accept/Auth headers.
         """
-        
-        #print("Getting CIPAPI headers...")
-
         auth_endpoint = "get-token/"
 
         url_response = requests.post(
