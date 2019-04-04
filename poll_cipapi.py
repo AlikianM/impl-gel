@@ -159,7 +159,16 @@ class CipApi():
         print("Setting up folder structure...")
         current_dir_path = os.path.dirname(os.path.realpath('__file__'))
         html_dir = 'ir_html_files'
-        
+
+        dir_name = os.path.join(current_dir_path, html_dir)
+
+        if not os.path.exists(dir_name):
+            print("Creating folder ", dir_name)
+            print("Saving files into ", dir_name)
+            os.mkdir(dir_name)
+        else:
+            print("Saving files into ", dir_name)
+ 
         for case in self.all_relevant_cases:
             print("Pulling html for case...", case["interpretation_request_id"])
 
