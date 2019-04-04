@@ -27,6 +27,16 @@ def parse_cancer_htmls():
     csv_dir = 'ir_html_scraped_files'
     report_dir_path = os.path.join(current_dir_path, html_dir)
 
+    file_output_path = os.path.join(
+        current_dir_path, csv_dir)
+
+    if not os.path.exists(file_output_path):
+        print("Creating folder ", file_output_path)
+        print("Saving files into ", file_output_path)
+        os.mkdir(file_output_path)
+    else:
+        print("Saving files into ", file_output_path)
+
     # Pandas dataframes to hold all rows per table (5 tables currently scraped)
     participant_info_df = pd.DataFrame()
     tumour_info_df = pd.DataFrame({})
